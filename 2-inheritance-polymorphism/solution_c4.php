@@ -2,7 +2,7 @@
 
 abstract class Animal
 {
-    public string $name;
+    protected string $name;
 
     public function __construct(string $name)
     {
@@ -16,25 +16,39 @@ abstract class Animal
 
 class Dog extends Animal
 {
-    public string $breed;
+    private string $breed;
+
+    public function __construct(string $name, string $breed)
+    {
+        parent::__construct($name);
+        $this->breed = $breed;
+    }
 
     public function makeSound(): string
     {
-        return "Woof! Woof!";
+        return $this->name . "a " . $this->breed . " says Woof! Woof!";
     }
 
     public function eat(): string
     {
         return "eating bones.";
     }
+
+    public function getBreed(): string
+    {
+        return $this->breed;
+    }
 }
 
 class Cat extends Animal
 {
-    public string $color;
+    public function __construct(string $name)
+    {
+        parent::__construct($name);
+    }
     public function makeSound(): string
     {
-        return "Meow! Meow!";
+        return $this->name . " says " . "Meow! Meow!";
     }
 
     public function eat(): string
@@ -45,9 +59,13 @@ class Cat extends Animal
 
 class Cow extends Animal
 {
+    public function __construct(string $name)
+    {
+        parent::__construct($name);
+    }
     public function makeSound(): string
     {
-        return "Moo! Moo!";
+        return $this->name . " says " . "Moo! Moo!";
     }
 
     public function eat(): string
@@ -56,13 +74,14 @@ class Cow extends Animal
     }
 }
 
-$dog = new Dog("Rex");
+$dog = new Dog("Rex", "Golden Retriever");
 $cat = new Cat("Whiskers");
 $cow = new Cow("Bessie");
 
 $array = [$dog, $cat, $cow];
 
 foreach ($array as $animal) {
-    echo $animal->name . " says " . $animal->makeSound() . PHP_EOL;
-    echo $animal->name . " " . $animal->eat() . PHP_EOL;
+    echo $animal->makeSound() . PHP_EOL;
+    echo $animal->eat() . PHP_EOL;
+    echo "------" . PHP_EOL;
 }
