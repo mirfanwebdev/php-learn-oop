@@ -102,17 +102,63 @@ class ConsoleLogger implements Logger
 
 class Reporter
 {
-    protected Logger $logger;
+    private Logger $logger;
 
     public function __construct(Logger $logger)
     {
         $this->logger = $logger;
     }
 
-    public function generateReport(array $data): void
+    public function generateReport(): void
     {
-        foreach ($data as $item) {
-            $this->logger->logInfo($item);
+        $this->logger->logInfo('Generating report...');
+
+        $this->logger->logInfo("Fetching data from source A");
+        if (rand(0, 1) === 0) {
+            $this->logger->logWarning("Some data from source A was incomplete");
         }
+
+        $this->logger->logInfo("Processing data for analysis");
+        if (rand(0, 5) === 0) {
+            $errMessage = "Critical error during data aggregation" .
+                " Report may be innacurate.";
+            $this->logger->logError($errMessage);
+            throw new Exception("Report generation failed due to aggregation error");
+        }
+
+        $this->logger->logInfo("Formatting report for output.");
+        $this->logger->logInfo("Report generated successfully.");
     }
 }
+
+echo "--- Logger System Example ---" . PHP_EOL;
+
+echo "\n--- Using FileLogger ---" . PHP_EOL;
+$fileLogger = new FileLogger(__DIR__ . '/app_logs.log');
+$fileReporter = new Reporter($fileLogger);
+try {
+    $fileReporter->generateReport();
+} catch (Exception $e) {
+    echo "Caught exception during file report generation: " .
+        $e->getMessage() . PHP_EOL;
+}
+echo "\n--- Using ConsoleLogger ---" . PHP_EOL;
+$consoleLogger = new ConsoleLogger();
+$consoleReporter = new Reporter($consoleLogger);
+try {
+    $consoleReporter->generateReport();
+} catch (Exception $e) {
+    echo "Caught exception during console report generation: " .
+        $e->getMessage() . PHP_EOL;
+}
+
+echo "\n--- Using DatabaseLogger ---" . PHP_EOL;
+$dbLogger = new DatabaseLogger();
+$dbReporter = new Reporter($dbLogger);
+try {
+    $dbReporter->generateReport();
+} catch (Exception $e) {
+    echo "Caught exception during database report generation: " .
+        $e->getMessage() . PHP_EOL;
+}
+echo PHP_EOL;
